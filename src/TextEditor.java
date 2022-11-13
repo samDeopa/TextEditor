@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
 public class TextEditor implements ActionListener {
     JFrame frame;
@@ -82,12 +83,45 @@ public class TextEditor implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==newFile){
-            textArea.append("hello this is broken");
+            TextEditor newTextEditor = new TextEditor();
         }
         if (e.getSource()==saveFile){
+            JFileChooser fileChooser = new JFileChooser("C:\\Users\\Sameer\\Desktop");
+            fileChooser.setApproveButtonText("Save");
+            int chooseOption = fileChooser.showSaveDialog(null);
+
+            if(chooseOption == JFileChooser.APPROVE_OPTION){
+                File file = new File(fileChooser.getSelectedFile().getAbsolutePath()+".txt");
+                String filePath = file.getPath();
+                try{
+                    BufferedWriter outFile = new BufferedWriter(new FileWriter(file));
+                    textArea.write(outFile);
+                    outFile.close();
+                }catch (Exception exception){
+                    System.out.println(exception);
+                }
+            }
 
         }
         if (e.getSource()==openFile){
+            JFileChooser fileChooser = new JFileChooser("C:\\Users\\Sameer\\Desktop");
+            int chooseOption = fileChooser.showOpenDialog(null);
+
+            if(chooseOption == JFileChooser.APPROVE_OPTION){
+                File file = fileChooser.getSelectedFile();
+                String filePath = file.getPath();
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader(filePath));
+                    String intermediate , output="";
+                    while ( (intermediate=br.readLine()) !=null){
+                        output+= intermediate+"\n";
+                    }
+                    textArea.setText(output);
+
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
+            }
 
         }
         if (e.getSource()==cut){
@@ -106,7 +140,7 @@ public class TextEditor implements ActionListener {
             textArea.selectAll();
         }
         if (e.getSource()==close){
-
+            System.exit(0);
         }
     }
 }
